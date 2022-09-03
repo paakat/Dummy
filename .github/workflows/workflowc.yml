@@ -1,0 +1,54 @@
+name: AtmInterface
+
+#on: [push, workflow_dispatch]
+on :
+  workflow_dispatch : 
+  
+  push :
+    paths : 
+      - 'AtmInterface/**'
+      - '!AtmInterface/README.md'
+
+jobs:
+
+  build:
+  
+    runs-on: ubuntu-20.04
+      
+    steps:
+    
+    - name: Dowloading Repository ... 
+      uses: actions/checkout@v2
+      
+    
+    - name: Executing WorkFlowA ...  
+      if: success()
+              
+      run: | 
+        echo "[WORFLOWS] I am here:'${PWD}' "
+        echo "[WORFLOWS] ls -la"
+        ls -la ${PWD}
+        echo "[WORFLOWS] "
+       
+        DVOLUME=${{ github.workspace }} 
+        echo "[WORFLOWS] Repository is:'${DVOLUME}' "
+        bash ./Actions/AtmInterfaceWF/Ubuntu/workflow.sh ${DVOLUME}
+        echo "[WORFLOWS] DONE!!"
+        
+         
+    - name: Saving Artifacts ...
+      uses: actions/upload-artifact@v2
+      with:
+        name: FromContainer
+        if-no-files-found: warn #  'error'  'warn'  'ignore' 
+        path: ./*.tar
+        retention-days: 1
+        
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v1.6
+      with:
+        projectBaseDir: 
+          AtmInterface
+        
+        
+        
