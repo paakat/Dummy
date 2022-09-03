@@ -1,0 +1,21 @@
+FROM ubuntu:jammy  AS general_setup
+
+## BASIC 
+USER root
+RUN apt-get --yes -qq update
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
+RUN apt-get --yes -qq update
+#RUN apt-get --yes -qq install build-essential  ## make, g++ 
+RUN apt-get --yes -qq install vim
+RUN apt-get --yes -qq install tree
+
+
+FROM general_setup AS java_setup
+RUN apt-get --yes -qq install openjdk-17-jre   ## Runtime Envoriment --> Virtual Machine
+RUN apt-get --yes -qq install openjdk-17-jdk   ## Development Kit
+RUN apt-get --yes -qq install junit4           ## Unit Test 
+
+
+FROM java_setup AS java_maven
+RUN apt-get --yes -qq install maven            ## Maven 
+
