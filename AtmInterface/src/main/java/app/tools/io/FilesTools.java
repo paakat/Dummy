@@ -1,11 +1,10 @@
 package app.tools.io;
 
 import app.tools.LMapIntegerString;
-//import app.tools.Definitions;
 import app.tools.Generic;
 
 import java.io.File;
-
+import java.nio.file.Files;
 
 public class FilesTools
 {
@@ -47,6 +46,19 @@ public class FilesTools
     File  fin = new File(fname);
     Generic.Exit(!fin.exists(), "[player.Runner] '"+ fin.getAbsolutePath() +"' no found!");
     return fin.isFile(); 
+  }
+
+
+  public static void RemoveFile(String fname)
+  {
+    try
+    {
+      Files.deleteIfExists( new File(fname).toPath() ); 
+    }
+    catch(Exception e)
+    {
+      System.out.println(" '"+ fname+ "' no found!"); 
+    }
   }
 
 }

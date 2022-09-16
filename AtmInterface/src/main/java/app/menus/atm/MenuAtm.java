@@ -34,6 +34,8 @@ public class MenuAtm extends Controller
     options.Put(i++, Names.WITHDRAW);
     options.Put(i++, Names.DEPOSIT);
     options.Put(i++, Names.TRANSFER);
+    options.Put(i++, AccountNames.USER);
+    options.Put(i++, AccountNames.PASS);
     options.Put(i++, Names.LOGOUT);
 
     Generic.PrintDebug("[CreateOptions] '"+GetName()+"' ...");
@@ -51,17 +53,19 @@ public class MenuAtm extends Controller
 
     String title = Generic.SetGreen(account.GetName());
     Double cash = Double.parseDouble(account.Get(AccountNames.CASH));
+    String user = account.Get(AccountNames.USER);
 
     switch(optionChosen)
     { 
       case(Names.LOGOUT)   -> { optionChosen = Names.HOME; }
+      case(Names.BALANCE)  -> { System.out.println("["+title+"] Cash:" + cash); }
       case(Names.TRANSFER) -> MenuAtmOperations.Transfer(cash,rScanner);
       case(Names.WITHDRAW) -> MenuAtmOperations.WithDraw(cash,rScanner);  
       case(Names.DEPOSIT)  -> MenuAtmOperations.Deposit(cash,rScanner);
-      case(Names.BALANCE)  -> { System.out.println("["+title+"] cash:" + cash); }
+      case(AccountNames.PASS) -> MenuAtmOperations.PassModify(rScanner);
+      case(AccountNames.USER) -> user = MenuAtmOperations.UserModify(rScanner);
     }
 
-    String user = account.Get(AccountNames.USER);
     new Serializing<LMapStringString>(AccountCurrentUser.account, user + ".ser");
 
     Generic.Exit(optionChosen == Names.TRANSFER,"\nThanks ..."); 

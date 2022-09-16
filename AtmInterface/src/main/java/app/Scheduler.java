@@ -2,7 +2,7 @@ package app;
 
 import app.tools.RecursiveScanner;
 import app.tools.LMapStringRunnable; 
-import app.tools.LMapIntegerString;
+//import app.tools.LMapIntegerString;
 import app.tools.Generic; 
 
 import app.menus.Names;
@@ -47,8 +47,9 @@ public class Scheduler
     for(String key : runners.keySet()) 
     {
       Controller runner = runners.Get(key);
-      LMapIntegerString options = runner.CreateOptions();
-      options.Print(); 
+      runner.CreateOptions().Print();
+      //LMapIntegerString options = runner.CreateOptions();
+      //options.Print(); 
     }  
  
     Generic.ClearConsoleUnix();

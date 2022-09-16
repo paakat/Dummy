@@ -37,3 +37,4 @@ MAVEN_SETUP
 COMPILATION_SETUP
 ${MAVEN} clean 
 ${MAVEN} package 
+

@@ -13,34 +13,33 @@ import app.account.AccountNames;
 import app.account.AccountCurrentUser;
 
 import app.tools.io.Serializing;
+import app.tools.io.FilesTools;
+import app.tools.HashValues;
 
 
 public class MenuAtmOperations
 {
 
-  static boolean Transfer(String user, Double received)    
+  public static void PassModify(RecursiveScanner rScanner)
   {
-    boolean done = false;
+    String passNew = SetData("new password : ",rScanner);
 
-    AccountFind accounts = new AccountFind();
-    accounts.LoadList(Names.PATH);
-    if( accounts.Exist(user) )
-    {
-      LMapStringString account = accounts.GetAccount(user);
+    AccountCurrentUser.account.Replace(AccountNames.PASS, HashValues.Create(passNew) );
+    System.out.println("\t[PassModify]  new pass:'"+ passNew +"' ");
+  }
 
-      Double cash = Double.parseDouble(account.Get(AccountNames.CASH));
-      Double amount = cash + received; 
-      account.Replace(AccountNames.CASH, amount.toString());
-      new Serializing<LMapStringString>(account, user + ".ser");
 
-      done = true; 
-    }
-    else 
-    {
-      System.out.println("\t[Transfer] '" + Generic.SetGreen(user) +"' no valid. Try again...");
-    }
+  public static String UserModify(RecursiveScanner rScanner)
+  {
+    String userPrevious = AccountCurrentUser.account.Get(AccountNames.USER);
 
-    return done; 
+    String userNew = SetData("new user : ",rScanner);
+    AccountCurrentUser.account.Replace(AccountNames.USER, userNew);
+
+    FilesTools.RemoveFile(userPrevious + ".ser"); 
+
+    System.out.println("\t[UserModify]  new pass:'"+ userNew +"' ");
+    return userNew; 
   }
 
 
@@ -53,11 +52,28 @@ public class MenuAtmOperations
     { 
       Double diff = money - amount;
       AccountCurrentUser.account.Replace(AccountNames.CASH, diff.toString() );
-      //new Serializing<LMapStringString>(AccountCurrentUser.account, target + ".ser");
-
       System.out.println("\t[Transfer] '"+target+"' received '"+amount+"'  (balance:" + diff +") ");
-      //Generic.Exit(true,"\nThanks ..."); 
     }
+  }
+
+
+  static boolean Transfer(String user, Double received)
+  {
+    boolean done = false;
+
+    LMapStringString a = GetAccount(user);
+    if(a != null)
+    {
+      Double cash = Double.parseDouble(a.Get(AccountNames.CASH));
+      Double amount = cash + received;
+
+      a.Replace(AccountNames.CASH, amount.toString());
+      new Serializing<LMapStringString>(a, user + ".ser");
+
+      done = true;
+    }
+
+    return done;
   }
 
 
@@ -111,6 +127,26 @@ public class MenuAtmOperations
     String inputa = null;
     inputa = rScanner.GetNextLine(text);
     return inputa;
+  }
+
+
+
+  static LMapStringString GetAccount(String user)
+  {
+    LMapStringString account = null;  
+
+    AccountFind accounts = new AccountFind();
+    accounts.LoadList(Names.PATH);
+    if( accounts.Exist(user) )
+    {
+      account = accounts.GetAccount(user);
+    }
+    else
+    {
+      System.out.println("\t[Transfer] '" + Generic.SetGreen(user) +"' no valid. Try again...");
+    }
+
+    return account;
   }
 
 }

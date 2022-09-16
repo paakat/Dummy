@@ -76,6 +76,38 @@ ATM_TEST02()
 }
 
 
+ATM_TEST03()
+{
+  ## 'b' created  
+  echo -e "0\n2\n1\nb\nb\nb\n" > dummy.txt # setup  
+  echo -e "1\nb\nb\n" >> dummy.txt #  login  
+  echo -e "6\nc\n" >> dummy.txt # pass 
+  echo -e "exit" >> dummy.txt
+
+  ${JAVA} -DDEBUG -jar ${EXEC} < <(cat dummy.txt)  > ${FUNCNAME[0]}.txt
+  rm dummy.txt
+
+  COMPARING b.ser ../Tests/${FUNCNAME[0]}.ser
+  echo "'${FUNCNAME[0]}' OK!"
+}
+
+
+ATM_TEST04()
+{
+  ## 'c' created  
+  echo -e "0\n2\n1\nc\nc\nc\n" > dummy.txt # setup  
+  echo -e "1\nc\nc\n" >> dummy.txt #  login  
+  echo -e "5\nd\n" >> dummy.txt # user. 'c' -> 'd' 
+  echo -e "exit" >> dummy.txt
+
+  ${JAVA} -DDEBUG -jar ${EXEC} < <(cat dummy.txt)  > ${FUNCNAME[0]}.txt
+  rm dummy.txt
+
+  COMPARING d.ser ../Tests/${FUNCNAME[0]}.ser
+  echo "'${FUNCNAME[0]}' OK!"
+}
+
+
 UBUNTU_JAMMY()
 {
   if [[ $OSTYPE == 'linux-gnu'* ]]; then
@@ -104,6 +136,8 @@ TESTS()
   LOGIN_TEST01
   ATM_TEST01
   ATM_TEST02
+  ATM_TEST03 
+  ATM_TEST04
 }
 
 
